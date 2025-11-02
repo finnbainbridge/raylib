@@ -529,7 +529,9 @@ __declspec(dllimport) void __stdcall Sleep(unsigned long msTimeout); // Required
 const char *TextFormat(const char *text, ...); // Formatting of text with variables to 'embed'
 #endif // !SUPPORT_MODULE_RTEXT
 
-#if defined(PLATFORM_DESKTOP)
+#if defined(PLATFORM_DESKTOP) && defined(PLATFORM_DESKTOP_GTK)
+    /* Use the GTK platform backend when requested via CMake (PLATFORM_DESKTOP_GTK) */
+#elif defined(PLATFORM_DESKTOP)
     #define PLATFORM_DESKTOP_GLFW
 #endif
 
@@ -557,7 +559,9 @@ const char *TextFormat(const char *text, ...); // Formatting of text with variab
 #endif // SUPPORT_CLIPBOARD_IMAGE
 
 // Include platform-specific submodules
-#if defined(PLATFORM_DESKTOP_GLFW)
+#if defined(PLATFORM_DESKTOP_GTK)
+    #include "platforms/rcore_desktop_gtk.c"
+#elif defined(PLATFORM_DESKTOP_GLFW)
     #include "platforms/rcore_desktop_glfw.c"
 #elif defined(PLATFORM_DESKTOP_SDL)
     #include "platforms/rcore_desktop_sdl.c"

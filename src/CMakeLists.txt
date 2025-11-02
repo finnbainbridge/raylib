@@ -40,9 +40,23 @@ set(raylib_sources
     )
 
 # <root>/cmake/GlfwImport.cmake handles the details around the inclusion of glfw
-if (NOT ${PLATFORM} MATCHES "Web")
-    include(GlfwImport)
-endif ()
+# Option to use a GTK-based platform backend instead of GLFW
+option(USE_GTK_PLATFORM "Use GTK-based rcore platform (rcore_desktop_gtk.c) instead of GLFW" ON)
+
+# If requested, expose a compile definition so platform selection in C sources
+# can detect the GTK backend (rcore.c will include platforms/rcore_desktop_gtk.c).
+if (USE_GTK_PLATFORM)
+    message(STATUS "raylib: Using GTK platform backend (rcore_desktop_gtk.c)")
+    add_compile_definitions(PLATFORM_DESKTOP_GTK)
+else()
+    if (NOT ${PLATFORM} MATCHES "Web")
+        # <root>/cmake/GlfwImport.cmake handles the details around the inclusion of glfw
+        # include(GlfwImport)
+    endif ()
+endif()
+
+
+
 
 # Sets additional platform options and link libraries for each platform
 # also selects the proper graphics API and version for that platform
@@ -69,7 +83,7 @@ else()
 endif()
 
 if (${PLATFORM} MATCHES "Web")
-    target_link_options(raylib PUBLIC "-sUSE_GLFW=3" -sEXPORTED_RUNTIME_METHODS=ccall)
+    # target_link_options(raylib PUBLIC "-sUSE_GLFW=3" -sEXPORTED_RUNTIME_METHODS=ccall)
     if(${GRAPHICS} MATCHES "GRAPHICS_API_OPENGL_ES3")
         target_link_options(raylib PUBLIC "-sMIN_WEBGL_VERSION=2")
         target_link_options(raylib PUBLIC "-sMAX_WEBGL_VERSION=2")

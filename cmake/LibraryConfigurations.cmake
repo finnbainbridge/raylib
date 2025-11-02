@@ -173,5 +173,11 @@ endif ()
 set(LIBS_PRIVATE ${LIBS_PRIVATE} ${OPENAL_LIBRARY})
 
 if (${PLATFORM} MATCHES "Desktop")
-    set(LIBS_PRIVATE ${LIBS_PRIVATE} glfw)
+    # Normally GLFW is used on desktop platforms. When building with the
+    # GTK-based stub platform we must not add GLFW to link libraries.
+    if (NOT (DEFINED USE_GTK_PLATFORM AND USE_GTK_PLATFORM))
+        set(LIBS_PRIVATE ${LIBS_PRIVATE} glfw)
+    else()
+        message(STATUS "LibraryConfigurations: Skipping GLFW linking because USE_GTK_PLATFORM=ON")
+    endif()
 endif ()
